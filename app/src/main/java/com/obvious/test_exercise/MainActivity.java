@@ -97,6 +97,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("position", adapterPosition);
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, (View)imageView, "animation");
-        context.startActivity(intent);
+        context.startActivity(intent, options.toBundle());
     }
 }
