@@ -1,12 +1,16 @@
 package com.obvious.test_exercise;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.obvious.test_exercise.adapters.ImagesAdapter;
 
@@ -22,7 +26,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Context context;
-
+    private ArrayList<HashMap<String, String>> imagesArrayList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             String jsonString = loadJSONFromAsset();
             JSONArray jsonArray = new JSONArray(jsonString);
-            ArrayList<HashMap<String, String>> imagesArrayList = new ArrayList<>();
+             imagesArrayList = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 HashMap<String, String> imagesHashMap = new HashMap<>();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -84,5 +88,15 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
         return json;
+    }
+
+    public void startNewActivity(int adapterPosition, View imageView) {
+        Toast.makeText(context, adapterPosition+ "", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(context, DetailsActivity.class);
+        intent.putExtra("imageList", imagesArrayList);
+        intent.putExtra("position", adapterPosition);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this, (View)imageView, "animation");
+        context.startActivity(intent);
     }
 }

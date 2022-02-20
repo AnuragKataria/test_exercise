@@ -2,16 +2,21 @@ package com.obvious.test_exercise.adapters;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.obvious.test_exercise.DetailsActivity;
+import com.obvious.test_exercise.MainActivity;
 import com.obvious.test_exercise.R;
 
 import java.util.ArrayList;
@@ -36,12 +41,19 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder,  int position) {
         String imageUrl = imagesArraylist.get(position).get("url");
         // Seting Image on ImageView
         Glide.with(context)
                 .load(imageUrl)
                 .into(holder.imageView);
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)context).startNewActivity(holder.getAdapterPosition(), holder.imageView);
+            }
+        });
 
     }
 
