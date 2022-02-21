@@ -1,32 +1,33 @@
 package com.obvious.test_exercise;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import com.obvious.test_exercise.adapters.ImagesAdapter;
+import com.obvious.test_exercise.utils.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Context context;
     private ArrayList<HashMap<String, String>> imagesArrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,18 +35,18 @@ public class MainActivity extends AppCompatActivity {
         context = this;
         recyclerView = findViewById(R.id.recyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
+        // setting layout manager with 3 cells in a row on recyclerView
         recyclerView.setLayoutManager(gridLayoutManager);
-
         try {
-            String jsonString = loadJSONFromAsset();
+            String jsonString = Util.loadJSONFromAsset(context);
             JSONArray jsonArray = new JSONArray(jsonString);
-             imagesArrayList = new ArrayList<>();
+            imagesArrayList = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 HashMap<String, String> imagesHashMap = new HashMap<>();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String copyright="NA";
-                if(jsonObject.has("copyright")){
-                     copyright = jsonObject.getString("copyright");
+                String copyright = "NA";
+                if (jsonObject.has("copyright")) {
+                    copyright = jsonObject.getString("copyright");
 
                 }
                 String date = jsonObject.getString("date");
@@ -66,7 +67,11 @@ public class MainActivity extends AppCompatActivity {
                 imagesHashMap.put("url", url);
                 imagesArrayList.add(imagesHashMap);
             }
+            // reversing the array to make latest entries come at first position
+            Collections.reverse(imagesArrayList);
+            // initalising adapter class
             ImagesAdapter imagesAdapter = new ImagesAdapter(context, imagesArrayList);
+            //setting adapter on recycleview
             recyclerView.setAdapter(imagesAdapter);
 
         } catch (JSONException e) {
@@ -74,29 +79,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = getAssets().open("data.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-
+    // calling details activity here from #ImagesAdapter class
     public void startNewActivity(int adapterPosition, View imageView) {
-        Toast.makeText(context, adapterPosition+ "", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(context, DetailsActivity.class);
         intent.putExtra("imageList", imagesArrayList);
         intent.putExtra("position", adapterPosition);
         ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, (View)imageView, "animation");
-        context.startActivity(intent, options.toBundle());
+                makeSceneTransitionAnimation(this, (View) imageView, "animation");
+        startActivity(intent, options.toBundle());
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitFromapp();
+
+    }
+
+    // App exit confirmation dialog
+    private void exitFromapp() {
+        new AlertDialog.Builder(this)
+                .setMessage(context.getResources().getString(R.string.exit_confirmation))
+                .setCancelable(false)
+                .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.super.onBackPressed();
+                    }
+                })
+                .setNegativeButton(context.getResources().getString(R.string.no), null)
+                .show();
     }
 }

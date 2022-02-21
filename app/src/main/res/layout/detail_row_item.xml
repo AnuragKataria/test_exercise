@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.obvious.test_exercise.utils.ZoomView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="5dp"
+            android:transitionName="animation" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/transparent">
+
+            <TextView
+                android:id="@+id/titleTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="5dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <it.mike5v.viewmoretextview.ViewMoreTextView
+                android:id="@+id/viewMoreTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleTV"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/white"
+                app:duration="500"
+
+                app:isExpanded="false"
+                app:visibleLines="3" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</LinearLayout>

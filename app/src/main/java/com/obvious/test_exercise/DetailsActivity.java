@@ -22,7 +22,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(R.layout.activity_detail);
         context = this;
         imagesArrayList = (ArrayList<HashMap<String, String>>) getIntent().getSerializableExtra("imageList");
         position = getIntent().getIntExtra("position", 0);
@@ -31,7 +31,7 @@ public class DetailsActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(detailViewAdapter);
         viewPager.setCurrentItem(position);
-        viewPager.setPadding(130, 0, 130, 0);
+        //viewPager.setPadding(130, 0, 130, 0);
 
     }
 }

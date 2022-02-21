@@ -1,22 +1,25 @@
 package com.obvious.test_exercise.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
+import com.obvious.test_exercise.DetailsActivity;
 import com.obvious.test_exercise.R;
+import com.obvious.test_exercise.utils.ZoomView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import it.mike5v.viewmoretextview.ViewMoreTextView;
+
 
 public class DetailViewAdapter extends PagerAdapter {
 
@@ -43,13 +46,26 @@ public class DetailViewAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
         layoutInflater = LayoutInflater.from(context);
-        View view = layoutInflater.inflate(R.layout.item, container, false);
-
-        ImageView imageView = view.findViewById(R.id.image);
-        TextView  title = view.findViewById(R.id.title);
-        TextView  desc = view.findViewById(R.id.desc);
-        title.setText(imagesArrayList.get(position).get("title"));
-        desc.setText(imagesArrayList.get(position).get("explanation"));
+        View view = layoutInflater.inflate(R.layout.detail_row_item, container, false);
+        ZoomView imageView = view.findViewById(R.id.image);
+        TextView titleTV = view.findViewById(R.id.titleTV);
+        ViewMoreTextView viewMoreTV = view.findViewById(R.id.viewMoreTV);
+        titleTV.setText(imagesArrayList.get(position).get("title"));
+        // append See less for collapsing if its OPened
+        viewMoreTV.setText(imagesArrayList.get(position).get("explanation") + " See Less");
+        // View more text functionality
+        viewMoreTV.setAnimationDuration(500)
+                .setEllipsizedText("View More")
+                .setVisibleLines(3)
+                .setIsExpanded(false)
+                .setEllipsizedTextColor(ContextCompat.getColor(((DetailsActivity) context), android.R.color.holo_blue_dark));
+        viewMoreTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                viewMoreTV.toggle();
+            }
+        });
+        // saving img url in string variable
         String imageUrl = imagesArrayList.get(position).get("url");
         // Seting Image on ImageView
         Glide.with(context)
@@ -63,4 +79,5 @@ public class DetailViewAdapter extends PagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
     }
+
 }
