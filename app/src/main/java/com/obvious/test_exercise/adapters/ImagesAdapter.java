@@ -21,18 +21,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.obvious.test_exercise.MainActivity;
 import com.obvious.test_exercise.R;
+import com.obvious.test_exercise.model.DataModel;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 
 public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder> {
-    private ArrayList<HashMap<String, String>> imagesArraylist;
+    private ArrayList<DataModel> imagesArraylist;
     private Context context;
 
-    public ImagesAdapter(Context context, ArrayList<HashMap<String, String>> imagesArraylist) {
+    public ImagesAdapter(Context context, ArrayList<DataModel> imagesArraylist) {
         this.imagesArraylist = imagesArraylist;
         this.context = context;
     }
@@ -46,8 +45,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder,  int position) {
-        String imageUrl = imagesArraylist.get(position).get("url");
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        String imageUrl = imagesArraylist.get(position).getUrl();
         holder.loadingView.setVisibility(View.VISIBLE);
         // Seting Image on ImageView
         Glide.with(context)
@@ -76,7 +75,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
             @Override
             public void onClick(View view) {
 
-                ((MainActivity)context).startNewActivity(holder.getAdapterPosition(), holder.imageView);
+                ((MainActivity) context).startNewActivity(holder.getAdapterPosition(), holder.imageView);
             }
         });
 

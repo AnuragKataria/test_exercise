@@ -1,10 +1,11 @@
 package com.obvious.test_exercise;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,70 +14,42 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.obvious.test_exercise.adapters.ImagesAdapter;
+import com.obvious.test_exercise.model.DataModel;
+import com.obvious.test_exercise.receiver.ConnectivityReceiver;
+import com.obvious.test_exercise.repository.ImagesRespository;
 import com.obvious.test_exercise.utils.Util;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.obvious.test_exercise.viewModel.ImageViewModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ImageViewModel, ConnectivityReceiver.ConnectivityReceiverListener {
     private RecyclerView recyclerView;
     private Context context;
-    private ArrayList<HashMap<String, String>> imagesArrayList;
+    private ArrayList<DataModel> imagesArrayList;
+    private AlertDialog alertDialog;
+    private Boolean isShown = false;
+    private ConnectivityReceiver mConnectivityReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        assignIds();
+
+    }
+
+    private void assignIds() {
         context = this;
+        // Register Connection reciever
+        mConnectivityReceiver = new ConnectivityReceiver(this);
         recyclerView = findViewById(R.id.recyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 3);
         // setting layout manager with 3 cells in a row on recyclerView
         recyclerView.setLayoutManager(gridLayoutManager);
-        try {
-            String jsonString = Util.loadJSONFromAsset(context);
-            JSONArray jsonArray = new JSONArray(jsonString);
-            imagesArrayList = new ArrayList<>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                HashMap<String, String> imagesHashMap = new HashMap<>();
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String copyright = "NA";
-                if (jsonObject.has("copyright")) {
-                    copyright = jsonObject.getString("copyright");
+        // init Images Repo
+        ImagesRespository imagesRespository = new ImagesRespository();
+        imagesRespository.getImagesArrayList(context);
 
-                }
-                String date = jsonObject.getString("date");
-                String explanation = jsonObject.getString("explanation");
-                String hdurl = jsonObject.getString("hdurl");
-                String media_type = jsonObject.getString("media_type");
-                String service_version = jsonObject.getString("service_version");
-                String title = jsonObject.getString("title");
-                String url = jsonObject.getString("url");
-
-                imagesHashMap.put("copyright", copyright);
-                imagesHashMap.put("date", date);
-                imagesHashMap.put("explanation", explanation);
-                imagesHashMap.put("hdurl", hdurl);
-                imagesHashMap.put("media_type", media_type);
-                imagesHashMap.put("service_version", service_version);
-                imagesHashMap.put("title", title);
-                imagesHashMap.put("url", url);
-                imagesArrayList.add(imagesHashMap);
-            }
-            // reversing the array to make latest entries come at first position
-            Collections.reverse(imagesArrayList);
-            // initalising adapter class
-            ImagesAdapter imagesAdapter = new ImagesAdapter(context, imagesArrayList);
-            //setting adapter on recycleview
-            recyclerView.setAdapter(imagesAdapter);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     // calling details activity here from #ImagesAdapter class
@@ -92,20 +65,58 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         exitFromapp();
-
     }
 
     // App exit confirmation dialog
     private void exitFromapp() {
-        new AlertDialog.Builder(this)
-                .setMessage(context.getResources().getString(R.string.exit_confirmation))
-                .setCancelable(false)
-                .setPositiveButton(context.getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        MainActivity.super.onBackPressed();
-                    }
-                })
-                .setNegativeButton(context.getResources().getString(R.string.no), null)
-                .show();
+        Util.showAlert(context, context.getResources().getString(R.string.exit_confirmation), context.getResources().getString(R.string.yes), context.getResources().getString(R.string.no), true);
+
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if (!isConnected)
+            showOrDismissNoInternetDialog(this, true);
+        else
+            showOrDismissNoInternetDialog(this, false);
+
+    }
+
+    public void showOrDismissNoInternetDialog(Context context, Boolean show) {
+        if (show) {
+            alertDialog = Util.showAlert(context, context.getResources().getString(R.string.no_internet), context.getResources().getString(R.string.retry), null, false);
+            isShown = true;
+        } else {
+            if (isShown) {
+                alertDialog.dismiss();
+                isShown = false;
+            }
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerReceiver(mConnectivityReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mConnectivityReceiver);
+    }
+
+    @Override
+    public void getImagesArrayList(ArrayList<DataModel> imagesArrayList) {
+        if (imagesArrayList.size() > 0) {
+            this.imagesArrayList = imagesArrayList;
+            // initalising adapter class
+            ImagesAdapter imagesAdapter = new ImagesAdapter(context, imagesArrayList);
+            //setting adapter on recycleview
+            recyclerView.setAdapter(imagesAdapter);
+        } else {
+            Toast.makeText(context, "No Images Available", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

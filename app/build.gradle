@@ -6,7 +6,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.obvious.test1"
+        applicationId "com.obvious.test_exercise"
         minSdk 21
         targetSdk 32
         versionCode 1

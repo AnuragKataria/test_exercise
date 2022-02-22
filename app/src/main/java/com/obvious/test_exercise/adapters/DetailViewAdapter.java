@@ -13,21 +13,21 @@ import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.obvious.test_exercise.DetailsActivity;
 import com.obvious.test_exercise.R;
+import com.obvious.test_exercise.model.DataModel;
 import com.obvious.test_exercise.utils.ZoomView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import it.mike5v.viewmoretextview.ViewMoreTextView;
 
 
 public class DetailViewAdapter extends PagerAdapter {
 
-    private ArrayList<HashMap<String, String>> imagesArrayList;
+    private ArrayList<DataModel> imagesArrayList;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public DetailViewAdapter(ArrayList<HashMap<String, String>> imagesArrayList, Context context) {
+    public DetailViewAdapter(ArrayList<DataModel> imagesArrayList, Context context) {
         this.imagesArrayList = imagesArrayList;
         this.context = context;
     }
@@ -50,9 +50,9 @@ public class DetailViewAdapter extends PagerAdapter {
         ZoomView imageView = view.findViewById(R.id.image);
         TextView titleTV = view.findViewById(R.id.titleTV);
         ViewMoreTextView viewMoreTV = view.findViewById(R.id.viewMoreTV);
-        titleTV.setText(imagesArrayList.get(position).get("title"));
+        titleTV.setText(imagesArrayList.get(position).getTitle());
         // append See less for collapsing if its OPened
-        viewMoreTV.setText(imagesArrayList.get(position).get("explanation") + " See Less");
+        viewMoreTV.setText(imagesArrayList.get(position).getExplanation() + " See Less");
         // View more text functionality
         viewMoreTV.setAnimationDuration(500)
                 .setEllipsizedText("View More")
@@ -66,7 +66,7 @@ public class DetailViewAdapter extends PagerAdapter {
             }
         });
         // saving img url in string variable
-        String imageUrl = imagesArrayList.get(position).get("url");
+        String imageUrl = imagesArrayList.get(position).getUrl();
         // Seting Image on ImageView
         Glide.with(context)
                 .load(imageUrl)

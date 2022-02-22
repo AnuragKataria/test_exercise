@@ -8,30 +8,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.obvious.test_exercise.adapters.DetailViewAdapter;
+import com.obvious.test_exercise.model.DataModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DetailsActivity extends AppCompatActivity {
     private ViewPager viewPager;
-    private DetailViewAdapter detailViewAdapter;
     private Context context;
     private int position;
-    private ArrayList<HashMap<String, String>> imagesArrayList;
+    private ArrayList<DataModel> imagesArrayList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         context = this;
-        imagesArrayList = (ArrayList<HashMap<String, String>>) getIntent().getSerializableExtra("imageList");
+        imagesArrayList = (ArrayList<DataModel>) getIntent().getSerializableExtra("imageList");
         position = getIntent().getIntExtra("position", 0);
-
-        detailViewAdapter = new DetailViewAdapter(imagesArrayList, context);
+        //init Viewpager Adapter
+        DetailViewAdapter detailViewAdapter = new DetailViewAdapter(imagesArrayList, context);
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(detailViewAdapter);
         viewPager.setCurrentItem(position);
-        //viewPager.setPadding(130, 0, 130, 0);
-
     }
 }

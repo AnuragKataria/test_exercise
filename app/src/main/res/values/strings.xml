@@ -3,4 +3,6 @@
     <string name="exit_confirmation">Are you sure you want to exit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet">No Internet Connection</string>
 </resources>
