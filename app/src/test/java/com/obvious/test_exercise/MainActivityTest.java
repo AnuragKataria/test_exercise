@@ -19,12 +19,15 @@ import java.util.ArrayList;
  */
 @RunWith(JUnit4.class)
 public class MainActivityTest {
-
+    // This method will check the Json string in Asset folder contains data or not
     @Test
     public void isJsonStringIsEmptyOrNot() {
         final String jsonString = ResourceHelper.loadString("test_data/data.json");
         assertTrue(jsonString != null);
     }
+
+    // This method will check the Arraylist which we are setting in adapter for recyclerview
+    // have data or empty
     @Test
     public void checkArrayListEmptyOrNot() {
         final String jsonString = ResourceHelper.loadString("test_data/data.json");
