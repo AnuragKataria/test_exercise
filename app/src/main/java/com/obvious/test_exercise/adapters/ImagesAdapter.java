@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -48,9 +49,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         String imageUrl = imagesArraylist.get(position).getUrl();
         holder.loadingView.setVisibility(View.VISIBLE);
+        RequestBuilder<Drawable> requestBuilder= Glide.with(holder.itemView.getContext())
+                .asDrawable().sizeMultiplier(0.1f);
+
         // Seting Image on ImageView
         Glide.with(context)
                 .load(imageUrl)
+                .thumbnail(requestBuilder)
                 .apply(new RequestOptions().error(R.mipmap.error).override(150, 150))
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(new RequestListener<Drawable>() {
