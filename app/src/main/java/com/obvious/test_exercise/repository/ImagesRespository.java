@@ -50,6 +50,37 @@ public class ImagesRespository {
         }
     }
 
+    // Test case method
+    public ArrayList<DataModel> getImagesArrayListTest( String jsonData) {
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+            ArrayList<DataModel> imagesArrayList = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String copyright = "NA";
+                if (jsonObject.has("copyright")) {
+                    copyright = jsonObject.getString("copyright");
+                }
+                String date = jsonObject.getString("date");
+                String explanation = jsonObject.getString("explanation");
+                String hdurl = jsonObject.getString("hdurl");
+                String media_type = jsonObject.getString("media_type");
+                String service_version = jsonObject.getString("service_version");
+                String title = jsonObject.getString("title");
+                String url = jsonObject.getString("url");
+                DataModel dataModel = new DataModel(copyright, date, explanation, hdurl, media_type, service_version, title, url);
+                imagesArrayList.add(dataModel);
+            }
+            // reversing the array to make latest entries come at first position
+            Collections.reverse(imagesArrayList);
+            return imagesArrayList;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }
 
